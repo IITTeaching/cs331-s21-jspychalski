@@ -1,5 +1,6 @@
 import unittest
 import sys
+import math
 from contextlib import contextmanager
 from io import StringIO
 
@@ -22,7 +23,15 @@ def captured_output():
 
 # implement this function
 def is_perfect(n):
-    pass
+    divisors = []
+    for x in range (1,n):
+        if n % x == 0:
+            divisors.append(x)
+    sumDivs = sum(divisors) 
+    if n == sumDivs:
+        return True
+    else:
+        return False
 
 # (3 points)
 def test1():
@@ -40,7 +49,11 @@ def test1():
 
 # implement this function
 def multiples_of_3_and_5(n):
-    pass
+    multiples = []
+    for x in range(1,n):
+        if x % 3 == 0 or x % 5 == 0:
+            multiples.append(x)
+    return sum(multiples)
 
 # (3 points)
 def test2():
@@ -53,7 +66,23 @@ def test2():
 # EXERCISE 3
 #################################################################################
 def integer_right_triangles(p):
-    pass
+    if p % 2 == 1: return 0
+    else:
+        m = 1
+        n = 1
+        perims = []
+        while(2*m*(m+n) <= p):
+            while(2*m*(m+n) <= p):
+                if math.gcd(m,n) == 1 and m > n and (m*n)%2 == 0:
+                    perims.append(2*m*(m+n))
+                m = m + 1
+            n = n + 1
+            m = n + 1
+        c = 0
+        for x in perims:
+            if p % x == 0: 
+                c = c+1
+        return c
 
 def test3():
     tc = unittest.TestCase()
@@ -66,8 +95,17 @@ def test3():
 #################################################################################
 
 # implement this function
-def gen_pattern(chars):
-    pass
+def gen_pattern(n):
+    strLength = len(n)
+    if strLength == 1: print(n)
+    else:
+        dimensionsFull = [(2*strLength - 1) * 2 - 1, 2*strLength - 1] #length and height of picture in characters, in that order
+        for x in range(1,dimensionsFull[1]+1):
+            startingNum = int(math.fabs((dimensionsFull[1]/2 + 0.5) - x)) #index of starting letter
+            if x == 1 or x == dimensionsFull[1]: charsOnly = n[-1:startingNum-1:-1]
+            elif x == (dimensionsFull[1] - 1)/2 +1: charsOnly = n[-1:0:-1] + n[0] + n[startingNum +1:]
+            else: charsOnly = n[-1:startingNum-1:-1] + n[startingNum +1:]
+            print('.'.join(charsOnly).center(dimensionsFull[0],'.'))
 
 def test4():
     tc = unittest.TestCase()
