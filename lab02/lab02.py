@@ -33,8 +33,26 @@ ROMEO_SOLILOQUY = """
 ################################################################################
 # Implement this function
 def compute_ngrams(toks, n=2):
-    """Returns an n-gram dictionary based on the provided list of tokens."""
-    pass
+    if type(toks) == str: tokens = [t.lower() for t in toks.split()] 
+    else: tokens = toks
+    Ntuples = []
+    for x in range(len(tokens)-n+1):
+        w = tokens[x:x+n]
+        Ntuples.append(tuple(w))
+    NGDict = {"initialize" : "dictionary"} 
+    NGDict.pop("initialize")
+    for x in Ntuples:
+        empty = []
+        y = list(x)
+        y.pop(0)
+        if x[0] not in NGDict.keys():
+            empty.append(tuple(y))
+            NGDict[x[0]] = empty
+        else:
+            a = NGDict[x[0]]
+            a.append(tuple(y))
+            NGDict[x[0]] = a
+    return NGDict
 
 def test1():
     test1_1()
@@ -93,7 +111,17 @@ def test1_2():
 ################################################################################
 # Implement this function
 def gen_passage(ngram_dict, length=100):
-    pass
+    passage = ''
+    while len(passage.split()) < length:
+        starter = random.choice(sorted(ngram_dict.keys()))
+        passage += (' ' + starter)
+        passage += (' ' + ' '.join(random.choice(ngram_dict[starter])))
+        while passage.split()[-1] in ngram_dict.keys():
+            passage += (' ' + ' '.join(random.choice(ngram_dict[passage.split()[-1]])))
+    listWords = passage.split()
+    listWords = listWords[:length]
+    passage = ' '.join(listWords)
+    return passage
 
 # 50 Points
 def test2():
