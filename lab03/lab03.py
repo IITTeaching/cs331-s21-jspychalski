@@ -9,25 +9,35 @@ S = TypeVar('S')
 # EXERCISE 1
 #################################################################################
 def mysort(lst: List[T], compare: Callable[[T, T], int]) -> List[T]:
-    """
-    This method should sort input list lst of elements of some type T.
-
-    Elements of the list are compared using function compare that takes two
-    elements of type T as input and returns -1 if the left is smaller than the
-    right element, 1 if the left is larger than the right, and 0 if the two
-    elements are equal.
-    """
-    pass
+    if len(lst) == 0: return lst
+    l = [lst[0]] #l is the sorted list
+    for x in lst[1:]:
+        if compare(x,l[0]) < 1:
+            l.insert(0,x)
+        elif compare(x,l[-1]) > -1:
+            l.append(x)
+        else:
+            c = 0
+            while compare(l[c],x) == -1: 
+                c+= 1
+            l.insert(c,x)
+    return l
 
 def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
-    """
-    This method search for elem in lst using binary search.
-
-    The elements of lst are compared using function compare. Returns the
-    position of the first (leftmost) match for elem in lst. If elem does not
-    exist in lst, then return -1.
-    """
-    pass
+    iMin = 0 
+    iMax = len(lst)-1
+    while True:
+        a = round((iMin+iMax)/2)
+        if compare(lst[a],elem) == -1:
+            iMin = a+1
+        elif compare(lst[a],elem) == 0:
+            while compare(lst[a],elem) == 0:
+                a -= 1
+            return a+1
+        else:
+            iMax = a-1
+        if iMin > iMax:
+            return -1
 
 class Student():
     """Custom class to test generic sorting and searching."""
@@ -107,21 +117,22 @@ def test1_5():
 #################################################################################
 class PrefixSearcher():
 
-    def __init__(self, document, k):
-        """
-        Initializes a prefix searcher using a document and a maximum
-        search string length k.
-        """
-        pass
+    def __init__(self, document, k): #creating and sorting prefixes
+        
+        self.doc = document
+        self.k = k
 
-    def search(self, q):
-        """
-        Return true if the document contains search string q (of
-
-        length up to n). If q is longer than n, then raise an
-        Exception.
-        """
-        pass
+    def search(self, q): #Return true if the document contains search string q of length n - if q is longer than n, then raise an exception
+        if len(q) > self.k:
+            raise Exception("The string you are searching for is too long")
+        else:
+            slices = []
+        for x in range(len(self.doc)-len(q)+1):
+            slices.append(self.doc[x:x+len(q)])
+        if q in slices:
+            return True
+        else:
+            return False
 
 # 30 Points
 def test2():
@@ -159,24 +170,30 @@ def test2_2():
 #################################################################################
 class SuffixArray():
 
-    def __init__(self, document: str):
-        """
-        Creates a suffix array for document (a string).
-        """
-        pass
+    def __init__(self, document: str): #creates a suffix array for document (a string).
+        
+        self.doc = document
+        suffixes = [document[x:] for x in range(len(document))]
+        sortedSuffixes = mysort(suffixes,intcmp)
+        self.suffArray = [suffixes.index(sortedSuffixes[x]) for x in range(len(suffixes))]
+        self.sortedSuffixes = sortedSuffixes
 
+    def positions(self, searchstr: str):# Returns all positions of searchstr in the documented indexed by suffix array.
+        
+        x = 0
+        while searchstr > self.sortedSuffixes[x]: x+= 1 #now searchriting is between indixes x-1 and x
+        pos = []
+        while x < len(self.sortedSuffixes):
+            if self.sortedSuffixes[x][:len(searchstr)] == searchstr:
+                pos.append(self.suffArray[x])
+                x+= 1
+            else: break
+        return mysort(pos,intcmp)
 
-    def positions(self, searchstr: str):
-        """
-        Returns all the positions of searchstr in the documented indexed by the suffix array.
-        """
-        pass
-
-    def contains(self, searchstr: str):
-        """
-        Returns true of searchstr is coontained in document.
-        """
-        pass
+    def contains(self, searchstr: str): #returns True if searchstr is contained in document
+        if len(self.positions(searchstr)) > 0:
+            return True
+        else: return False
 
 # 40 Points
 def test3():
