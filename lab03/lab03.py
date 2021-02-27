@@ -168,6 +168,9 @@ def test2_2():
 #################################################################################
 # EXERCISE 3
 #################################################################################
+
+intcmp = lambda x,y:  0 if x == y else (-1 if x < y else 1)
+
 class SuffixArray():
 
     def __init__(self, document: str): #creates a suffix array for document (a string).
